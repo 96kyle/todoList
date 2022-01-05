@@ -4,14 +4,14 @@ part 'updateModel.g.dart';
 
 @JsonSerializable()
 class UpdateModel {
-  final String updateTitle;
-  final String updateContent;
-  final DateTime updateTime;
+  final String title;
+  final String content;
+  final DateTime time;
 
   UpdateModel({
-    required this.updateTitle,
-    required this.updateContent,
-    required this.updateTime,
+    required this.title,
+    required this.content,
+    required this.time,
   });
 
   factory UpdateModel.fromJson(Map<String, dynamic> json) =>

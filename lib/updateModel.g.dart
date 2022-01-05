@@ -7,14 +7,14 @@ part of 'updateModel.dart';
 // **************************************************************************
 
 UpdateModel _$UpdateModelFromJson(Map<String, dynamic> json) => UpdateModel(
-      updateTitle: json['updateTitle'] as String,
-      updateContent: json['updateContent'] as String,
-      updateTime: DateTime.parse(json['updateTime'] as String),
+      title: json['title'] as String,
+      content: json['content'] as String,
+      time: DateTime.parse(json['time'] as String),
     );
 
 Map<String, dynamic> _$UpdateModelToJson(UpdateModel instance) =>
     <String, dynamic>{
-      'updateTitle': instance.updateTitle,
-      'updateContent': instance.updateContent,
-      'updateTime': instance.updateTime.toIso8601String(),
+      'title': instance.title,
+      'content': instance.content,
+      'time': instance.time.toIso8601String(),
     };

@@ -12,6 +12,7 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // TODO: title 변경
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,

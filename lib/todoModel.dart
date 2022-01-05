@@ -6,13 +6,13 @@ part 'todoModel.g.dart';
 @JsonSerializable()
 class TodoModel {
   final int index;
-  bool done;
+  final bool done;
   final String title;
   final String content;
   final bool topFixed;
   final DateTime dueDate;
   final DateTime writeDate;
-  List<UpdateModel>? updateModelList;
+  final List<UpdateModel> updateModelList;
 
   TodoModel({
     required this.index,
@@ -22,7 +22,7 @@ class TodoModel {
     required this.topFixed,
     required this.dueDate,
     required this.writeDate,
-    this.updateModelList,
+    required this.updateModelList,
   });
 
   factory TodoModel.fromJson(Map<String, dynamic> json) =>

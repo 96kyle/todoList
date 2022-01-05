@@ -14,8 +14,8 @@ TodoModel _$TodoModelFromJson(Map<String, dynamic> json) => TodoModel(
       topFixed: json['topFixed'] as bool,
       dueDate: DateTime.parse(json['dueDate'] as String),
       writeDate: DateTime.parse(json['writeDate'] as String),
-      updateModelList: (json['updateModelList'] as List<dynamic>?)
-          ?.map((e) => UpdateModel.fromJson(e as Map<String, dynamic>))
+      updateModelList: (json['updateModelList'] as List<dynamic>)
+          .map((e) => UpdateModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
