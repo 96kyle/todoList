@@ -4,11 +4,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_list/page/todoListPage.dart';
 import 'package:todo_list/store/todoStore.dart';
+import 'package:todo_list/todoModel.dart';
 import 'package:todo_list/widget/dataPickerModal.dart';
 
 class WriteTodoItemPage extends StatefulWidget {
   bool addTodo;
-  String? item;
+  TodoModel? item;
 
   WriteTodoItemPage({Key? key, required this.addTodo, this.item})
       : super(key: key);
@@ -22,6 +23,13 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
   final contentController = TextEditingController();
 
   String errMsg = '';
+
+  @override
+  void initState() {
+    titleController.text = widget.item?.title ?? '';
+    contentController.text = widget.item?.content ?? '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +111,7 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
                 TextField(
                   controller: titleController,
                   decoration: InputDecoration(
+                    hintText: widget.item != null ? widget.item!.title : '',
                     fillColor: Colors.grey,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -139,30 +148,44 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
                       Radius.circular(10),
                     ),
                   ),
-                  child: Observer(
-                    builder: (_) => Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: TodoStore.instance.selectDateTime == null
-                              ? Text('')
-                              : Text(
-                                  '${DateFormat("yyyy년 MM월 dd일").format(TodoStore.instance.selectDateTime!)}',
-                                ),
-                        ),
-                        Container(
-                          child: InkWell(
-                            onTap: () {
-                              showDatePickerModal();
-                            },
-                            child: Icon(
-                              Icons.calendar_today,
-                              color: Colors.blue,
-                            ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Observer(
+                        builder: (_) => widget.item == null
+                            ? Container(
+                                child: TodoStore.instance.selectDateTime ==
+                                        DateTime(0)
+                                    ? Text('')
+                                    : Text(
+                                        '${DateFormat("yyyy년 MM월 dd일").format(TodoStore.instance.selectDateTime)}',
+                                      ),
+                              )
+                            : Container(
+                                child: widget.item!.dueDate == DateTime(0)
+                                    ? Text('')
+                                    : TodoStore.instance.selectDateTime ==
+                                            DateTime(0)
+                                        ? Text(
+                                            '${DateFormat("yyyy년 MM월 dd일").format(widget.item!.dueDate)}',
+                                          )
+                                        : Text(
+                                            '${DateFormat("yyyy년 MM월 dd일").format(TodoStore.instance.selectDateTime)}',
+                                          ),
+                              ),
+                      ),
+                      Container(
+                        child: InkWell(
+                          onTap: () {
+                            showDatePickerModal();
+                          },
+                          child: Icon(
+                            Icons.calendar_today,
+                            color: Colors.blue,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
@@ -180,6 +203,7 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
                   ),
                   maxLines: 10,
                   decoration: InputDecoration(
+                    hintText: widget.item != null ? widget.item!.content : '',
                     fillColor: Colors.grey,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -203,24 +227,42 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
   }
 
   void addItem() {
-    setState(() {
-      if (titleController.text == '') {
+    if (titleController.text == '') {
+      setState(() {
         errMsg = '제목은 필수 항목입니다.';
-      } else {
-        TodoStore.instance.addTodo(
-          titleController.text,
-          contentController.text,
-        );
+      });
+    } else {
+      TodoStore.instance.addTodo(
+        titleController.text,
+        contentController.text,
+      );
 
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => TodoListPage(),
-          ),
-        );
-      }
-    });
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TodoListPage(),
+        ),
+      );
+    }
   }
 
-  //TODO:작성필요
-  void updateItem() {}
+  void updateItem() {
+    if (titleController.text == '') {
+      setState(() {
+        errMsg = '제목은 필수 항목입니다.';
+      });
+    } else {
+      TodoStore.instance.updateTodo(
+        titleController.text,
+        contentController.text,
+        widget.item!.index,
+        widget.item!.updateModelList,
+      );
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TodoListPage(),
+        ),
+      );
+    }
+  }
 }

@@ -18,68 +18,11 @@ class TodoStore extends TodoStoreBase with _$TodoStore {
 }
 
 abstract class TodoStoreBase with Store {
-  List<TodoModel> data = [
-    TodoModel(
-      index: 1,
-      done: false,
-      title: 'Todo item 제목',
-      content:
-          'TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용TODO 내용',
-      topFixed: false,
-      dueDate: DateTime(2022, 1, 3, 5, 4, 30),
-      writeDate: DateTime.now(),
-      updateModelList: [
-        UpdateModel(
-          title: '수정사항1',
-          content: '수정내용',
-          time: DateTime.now(),
-        ),
-        UpdateModel(
-          title: '수정사항2',
-          content: '수정내용',
-          time: DateTime.now(),
-        ),
-        UpdateModel(
-          title: '수정사항3',
-          content: '수정내용',
-          time: DateTime.now(),
-        ),
-      ],
-    ),
-    TodoModel(
-      index: 2,
-      done: true,
-      title: 'Todo item 제목',
-      content: 'qwe',
-      topFixed: false,
-      dueDate: DateTime.now(),
-      writeDate: DateTime.now(),
-      updateModelList: [],
-    ),
-    TodoModel(
-      index: 3,
-      done: false,
-      title: 'Todo item 제목',
-      content: 'qwe',
-      topFixed: false,
-      dueDate: DateTime(2022, 1, 6, 5, 4, 30),
-      writeDate: DateTime.now(),
-      updateModelList: [],
-    ),
-    TodoModel(
-      index: 4,
-      done: true,
-      title: 'Todo item 제목',
-      content: 'qwe',
-      topFixed: false,
-      dueDate: DateTime.now(),
-      writeDate: DateTime.now(),
-      updateModelList: [],
-    )
-  ];
+  @observable
+  List<TodoModel> data = [];
 //------------ 날짜 선택 관련 ---------------
   @observable
-  DateTime? selectDateTime;
+  DateTime selectDateTime = DateTime(0);
 
   @action
   void getTime(DateTime selectTime) {
@@ -91,32 +34,75 @@ abstract class TodoStoreBase with Store {
   @observable
   ObservableList<TodoModel> todoList = ObservableList();
 
-//TODO:수정필요
   @action
   void addTodo(String title, String content) {
-    if (selectDateTime == null) {
-      selectDateTime = DateTime.now();
-    }
     final addItem = TodoModel(
-        index: data.length + 1,
-        done: false,
-        title: title,
-        content: content,
-        topFixed: false,
-        dueDate: selectDateTime!,
-        writeDate: DateTime.now(),
-        updateModelList: []);
+      index: data.length + 1,
+      done: false,
+      title: title,
+      content: content,
+      topFixed: false,
+      dueDate: selectDateTime,
+      writeDate: DateTime.now(),
+      completeDate: DateTime(0),
+      updateModelList: [],
+    );
 
     data.add(addItem);
-    selectDateTime = DateTime.now();
-  }
-
-  @action
-  void getTodoList() {
-    //api에서 호출받은 데이터 넣어야함 지금은 없으므로 더미데이터 넣었음
     todoList.clear();
     todoList.addAll(data);
+
+    selectDateTime = DateTime(0);
   }
+
+//--------------------update-------------------------------------------
+  @action
+  void updateTodo(
+    String title,
+    String content,
+    int index,
+    List<UpdateModel> updateModelList,
+  ) {
+    final a = data.indexWhere((v) {
+      return v.index == index;
+    });
+
+    final json = data[a].toJson();
+
+    List<dynamic> updateData = [];
+
+    if (updateModelList.isNotEmpty) {
+      for (int i = 0; i < updateModelList.length; i++) {
+        updateData.add(UpdateModel(
+          title: updateModelList[i].title,
+          content: updateModelList[i].content,
+          time: updateModelList[i].time,
+        ).toJson());
+      }
+    }
+
+    updateData.add(UpdateModel(
+      title: title,
+      content: content,
+      time: DateTime.now(),
+    ).toJson());
+
+    json['title'] = title;
+    json['content'] = content;
+    json['dueDate'] = selectDateTime.toString();
+    json['updateModelList'] = updateData;
+
+    final newItem = TodoModel.fromJson(json);
+
+    data[a] = newItem;
+
+    todoList.clear();
+    todoList.addAll(data);
+
+    selectDateTime = DateTime(0);
+  }
+
+//-----------------------------------------------------------------------
 
   @action
   TodoModel selectTodo(int index) {
@@ -133,8 +119,26 @@ abstract class TodoStoreBase with Store {
       return v.index == index;
     });
 
+    List<dynamic> updateData = [];
+
+    if (data[a].updateModelList.isNotEmpty) {
+      for (int i = 0; i < data[a].updateModelList.length; i++) {
+        updateData.add(UpdateModel(
+          title: data[a].updateModelList[i].title,
+          content: data[a].updateModelList[i].content,
+          time: data[a].updateModelList[i].time,
+        ).toJson());
+      }
+    }
+
     final json = data[a].toJson();
     json['done'] = !data[a].done;
+    json['updateModelList'] = updateData;
+    if (json['done'] == true) {
+      json['completeDate'] = DateTime.now().toString();
+    } else {
+      json['completeDate'] = DateTime(0).toString();
+    }
 
     final newItem = TodoModel.fromJson(json);
     data[a] = newItem;

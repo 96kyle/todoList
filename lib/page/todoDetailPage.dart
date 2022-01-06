@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_list/page/writeTodoItemPage.dart';
+import 'package:todo_list/store/todoStore.dart';
 import 'package:todo_list/todoModel.dart';
 import 'package:todo_list/widget/updatedCard.dart';
 
@@ -67,7 +69,10 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
       ),
       floatingActionButton: updateButton(),
       body: DefaultTextStyle(
-        style: TextStyle(fontSize: 12, color: Colors.black),
+        style: TextStyle(
+          fontSize: 12,
+          color: Colors.black,
+        ),
         overflow: TextOverflow.ellipsis,
         child: Container(
           child: ListView(
@@ -95,9 +100,11 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                           child: Container(
                             child: widget.item.updateModelList.isEmpty
                                 ? Text(
-                                    '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.writeDate)} 작성')
+                                    '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.writeDate)} 작성',
+                                  )
                                 : Text(
-                                    '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.updateModelList.last.time)} 수정'),
+                                    '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.updateModelList.last.time)} 수정',
+                                  ),
                           ),
                         ),
                         Expanded(
@@ -105,13 +112,40 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                //TODO:수정필요
-                                Text('20일남음'),
-                                Text('2022-01-08완료'),
+                                widget.item.dueDate == DateTime(0) ||
+                                        widget.item.done == true
+                                    ? Container()
+                                    : int.parse(widget.item.dueDate
+                                                .difference(DateTime.now())
+                                                .inDays
+                                                .toString()) ==
+                                            0
+                                        ? Text('당일')
+                                        : int.parse(widget.item.dueDate
+                                                    .difference(DateTime.now())
+                                                    .inDays
+                                                    .toString()) >
+                                                0
+                                            ? Text(
+                                                '${int.parse((widget.item.dueDate.difference(DateTime.now()).inDays + 1).toString())}일 남음',
+                                              )
+                                            : Text(
+                                                '${-int.parse((widget.item.dueDate.difference(DateTime.now()).inDays).toString())}일 초과',
+                                              ),
+                                widget.item.dueDate == DateTime(0)
+                                    ? Container()
+                                    : Text(
+                                        '${DateFormat("yyyy-MM-dd").format(widget.item.dueDate)} 까지',
+                                      ),
+                                widget.item.done
+                                    ? Text(
+                                        '${DateFormat("yyyy-MM-dd").format(widget.item.completeDate)} 완료',
+                                      )
+                                    : Container(),
                               ],
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -176,6 +210,7 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
       MaterialPageRoute(
         builder: (context) => WriteTodoItemPage(
           addTodo: false,
+          item: widget.item,
         ),
       ),
     );

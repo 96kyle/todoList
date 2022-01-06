@@ -12,6 +12,7 @@ class TodoModel {
   final bool topFixed;
   final DateTime dueDate;
   final DateTime writeDate;
+  final DateTime completeDate;
   final List<UpdateModel> updateModelList;
 
   TodoModel({
@@ -22,6 +23,7 @@ class TodoModel {
     required this.topFixed,
     required this.dueDate,
     required this.writeDate,
+    required this.completeDate,
     required this.updateModelList,
   });
 

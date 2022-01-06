@@ -12,7 +12,7 @@ class DatePickerModal extends StatefulWidget {
 }
 
 class _DatePickerModalState extends State<DatePickerModal> {
-  DateTime? selectTime;
+  DateTime selectTime = DateTime(0);
 
   @override
   Widget build(BuildContext context) => Dialog(
@@ -44,7 +44,7 @@ class _DatePickerModalState extends State<DatePickerModal> {
                   ),
                   child: TextButton(
                     onPressed: () {
-                      selectComplete(selectTime!);
+                      selectComplete(selectTime);
                     },
                     child: Text('선택 완료'),
                   ),

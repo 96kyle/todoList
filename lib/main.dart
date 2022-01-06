@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list/page/todoDetailPage.dart';
 import 'package:todo_list/page/todoListPage.dart';
 
 void main() {
@@ -12,8 +13,7 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // TODO: title 변경
-      title: 'Flutter Demo',
+      title: 'Todo List',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

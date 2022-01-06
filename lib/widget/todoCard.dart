@@ -26,15 +26,15 @@ class _TodoCardState extends State<TodoCard> {
               toDetail(widget.item.index);
             },
             child: AnimatedContainer(
-              duration: Duration(milliseconds: 100),
               padding: EdgeInsets.symmetric(
                 horizontal: 10,
-                vertical: 10,
               ),
+              duration: Duration(milliseconds: 100),
               decoration: BoxDecoration(
                 color: widget.item.done
                     ? Colors.white
-                    : DateTime.now().isBefore(widget.item.dueDate)
+                    : DateTime.now().isBefore(widget.item.dueDate) ||
+                            widget.item.dueDate == DateTime(0)
                         ? Colors.yellow[300]
                         : Colors.red[100],
                 border: Border.all(
@@ -64,6 +64,10 @@ class _TodoCardState extends State<TodoCard> {
                   children: [
                     Expanded(
                       child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 15,
+                        ),
                         margin: EdgeInsets.only(
                           right: 5,
                         ),
@@ -86,13 +90,38 @@ class _TodoCardState extends State<TodoCard> {
                               ),
                       ),
                     ),
-                    Container(
-                      child: Column(
-                        children: [
-                          //TODO:작성필요
-                          // Text(),
-                          // Text(),
-                        ],
+                    Expanded(
+                      child: Container(
+                        child: Column(
+                          children: [
+                            widget.item.dueDate == DateTime(0) ||
+                                    widget.item.done == true
+                                ? Container()
+                                : int.parse(widget.item.dueDate
+                                            .difference(DateTime.now())
+                                            .inDays
+                                            .toString()) ==
+                                        0
+                                    ? Text('당일')
+                                    : int.parse(widget.item.dueDate
+                                                .difference(DateTime.now())
+                                                .inDays
+                                                .toString()) >
+                                            0
+                                        ? Text(
+                                            '${int.parse((widget.item.dueDate.difference(DateTime.now()).inDays + 1).toString())}일 남음')
+                                        : Text(
+                                            '${-int.parse((widget.item.dueDate.difference(DateTime.now()).inDays).toString())}일 초과'),
+                            widget.item.dueDate == DateTime(0)
+                                ? Container()
+                                : Text(
+                                    '${DateFormat("yyyy-MM-dd").format(widget.item.dueDate)} 까지'),
+                            widget.item.done
+                                ? Text(
+                                    '${DateFormat("yyyy-MM-dd").format(widget.item.completeDate)} 완료')
+                                : Container(),
+                          ],
+                        ),
                       ),
                     ),
                     InkWell(

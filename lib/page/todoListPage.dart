@@ -17,15 +17,6 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   @override
-  void initState() {
-    load();
-  }
-
-  void load() {
-    TodoStore.instance.getTodoList();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -49,8 +40,9 @@ class _TodoListPageState extends State<TodoListPage> {
           child: ListView.builder(
             padding: EdgeInsets.all(10),
             itemCount: TodoStore.instance.todoList.length,
-            itemBuilder: (_, index) =>
-                TodoCard(item: TodoStore.instance.todoList[index]),
+            itemBuilder: (_, index) => TodoCard(
+              item: TodoStore.instance.todoList[index],
+            ),
           ),
         ),
       ),

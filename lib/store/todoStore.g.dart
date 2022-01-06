@@ -9,16 +9,31 @@ part of 'todoStore.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$TodoStore on TodoStoreBase, Store {
+  final _$dataAtom = Atom(name: 'TodoStoreBase.data');
+
+  @override
+  List<TodoModel> get data {
+    _$dataAtom.reportRead();
+    return super.data;
+  }
+
+  @override
+  set data(List<TodoModel> value) {
+    _$dataAtom.reportWrite(value, super.data, () {
+      super.data = value;
+    });
+  }
+
   final _$selectDateTimeAtom = Atom(name: 'TodoStoreBase.selectDateTime');
 
   @override
-  DateTime? get selectDateTime {
+  DateTime get selectDateTime {
     _$selectDateTimeAtom.reportRead();
     return super.selectDateTime;
   }
 
   @override
-  set selectDateTime(DateTime? value) {
+  set selectDateTime(DateTime value) {
     _$selectDateTimeAtom.reportWrite(value, super.selectDateTime, () {
       super.selectDateTime = value;
     });
@@ -65,11 +80,12 @@ mixin _$TodoStore on TodoStoreBase, Store {
   }
 
   @override
-  void getTodoList() {
+  void updateTodo(String title, String content, int index,
+      List<UpdateModel> updateModelList) {
     final _$actionInfo = _$TodoStoreBaseActionController.startAction(
-        name: 'TodoStoreBase.getTodoList');
+        name: 'TodoStoreBase.updateTodo');
     try {
-      return super.getTodoList();
+      return super.updateTodo(title, content, index, updateModelList);
     } finally {
       _$TodoStoreBaseActionController.endAction(_$actionInfo);
     }
@@ -100,6 +116,7 @@ mixin _$TodoStore on TodoStoreBase, Store {
   @override
   String toString() {
     return '''
+data: ${data},
 selectDateTime: ${selectDateTime},
 todoList: ${todoList}
     ''';
