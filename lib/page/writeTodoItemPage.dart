@@ -22,6 +22,8 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
 
+  DateTime? selectedTime;
+
   String errMsg = '';
 
   @override
@@ -128,8 +130,8 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
                       ),
                 Container(
                   margin: EdgeInsets.only(
-                    bottom: 10,
                     top: 10,
+                    bottom: 10,
                   ),
                   alignment: Alignment.centerLeft,
                   child: Text('완료일'),
@@ -151,29 +153,7 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Observer(
-                        builder: (_) => widget.item == null
-                            ? Container(
-                                child: TodoStore.instance.selectDateTime ==
-                                        DateTime(0)
-                                    ? Text('')
-                                    : Text(
-                                        '${DateFormat("yyyy년 MM월 dd일").format(TodoStore.instance.selectDateTime)}',
-                                      ),
-                              )
-                            : Container(
-                                child: widget.item!.dueDate == DateTime(0)
-                                    ? Text('')
-                                    : TodoStore.instance.selectDateTime ==
-                                            DateTime(0)
-                                        ? Text(
-                                            '${DateFormat("yyyy년 MM월 dd일").format(widget.item!.dueDate)}',
-                                          )
-                                        : Text(
-                                            '${DateFormat("yyyy년 MM월 dd일").format(TodoStore.instance.selectDateTime)}',
-                                          ),
-                              ),
-                      ),
+                      time(),
                       Container(
                         child: InkWell(
                           onTap: () {
@@ -218,12 +198,31 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
     );
   }
 
-  void showDatePickerModal() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return DatePickerModal();
-        });
+  Widget time() => Container(
+        child: Text(
+          selectedTime != null
+              ? DateFormat("yyyy년 MM월 dd일").format(selectedTime!)
+              : widget.item?.dueDate != null
+                  ? DateFormat("yyyy년 MM월 dd일").format(widget.item!.dueDate!)
+                  : '',
+        ),
+      );
+
+  Future showDatePickerModal() async {
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DatePickerModal();
+      },
+    );
+
+    if (result == null) {
+      return;
+    }
+
+    setState(() {
+      selectedTime = result;
+    });
   }
 
   void addItem() {
@@ -231,18 +230,20 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
       setState(() {
         errMsg = '제목은 필수 항목입니다.';
       });
-    } else {
-      TodoStore.instance.addTodo(
-        titleController.text,
-        contentController.text,
-      );
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => TodoListPage(),
-        ),
-      );
+      return;
     }
+
+    TodoStore.instance.addTodo(
+      titleController.text,
+      contentController.text,
+      selectedTime,
+    );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TodoListPage(),
+      ),
+    );
   }
 
   void updateItem() {
@@ -250,19 +251,20 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
       setState(() {
         errMsg = '제목은 필수 항목입니다.';
       });
-    } else {
-      TodoStore.instance.updateTodo(
-        titleController.text,
-        contentController.text,
-        widget.item!.index,
-        widget.item!.updateModelList,
-      );
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => TodoListPage(),
-        ),
-      );
+      return;
     }
+
+    TodoStore.instance.updateTodo(
+      widget.item!.index,
+      titleController.text,
+      contentController.text,
+      selectedTime,
+    );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TodoListPage(),
+      ),
+    );
   }
 }

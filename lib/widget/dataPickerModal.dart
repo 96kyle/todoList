@@ -12,7 +12,7 @@ class DatePickerModal extends StatefulWidget {
 }
 
 class _DatePickerModalState extends State<DatePickerModal> {
-  DateTime selectTime = DateTime(0);
+  DateTime selectTime = DateTime.now();
 
   @override
   Widget build(BuildContext context) => Dialog(
@@ -25,7 +25,7 @@ class _DatePickerModalState extends State<DatePickerModal> {
                 child: Container(
                   child: CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.date,
-                    initialDateTime: DateTime(2022, 1, 1),
+                    initialDateTime: selectTime,
                     onDateTimeChanged: (DateTime newDateTime) {
                       selectTime = newDateTime;
                     },
@@ -44,7 +44,7 @@ class _DatePickerModalState extends State<DatePickerModal> {
                   ),
                   child: TextButton(
                     onPressed: () {
-                      selectComplete(selectTime);
+                      Navigator.of(context).pop(selectTime);
                     },
                     child: Text('선택 완료'),
                   ),
@@ -54,10 +54,4 @@ class _DatePickerModalState extends State<DatePickerModal> {
           ),
         ),
       );
-
-  selectComplete(DateTime selectTime) {
-    TodoStore.instance.getTime(selectTime);
-
-    Navigator.pop(context);
-  }
 }

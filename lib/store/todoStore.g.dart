@@ -9,94 +9,38 @@ part of 'todoStore.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$TodoStore on TodoStoreBase, Store {
-  final _$dataAtom = Atom(name: 'TodoStoreBase.data');
-
-  @override
-  List<TodoModel> get data {
-    _$dataAtom.reportRead();
-    return super.data;
-  }
-
-  @override
-  set data(List<TodoModel> value) {
-    _$dataAtom.reportWrite(value, super.data, () {
-      super.data = value;
-    });
-  }
-
-  final _$selectDateTimeAtom = Atom(name: 'TodoStoreBase.selectDateTime');
-
-  @override
-  DateTime get selectDateTime {
-    _$selectDateTimeAtom.reportRead();
-    return super.selectDateTime;
-  }
-
-  @override
-  set selectDateTime(DateTime value) {
-    _$selectDateTimeAtom.reportWrite(value, super.selectDateTime, () {
-      super.selectDateTime = value;
-    });
-  }
-
-  final _$todoListAtom = Atom(name: 'TodoStoreBase.todoList');
-
-  @override
-  ObservableList<TodoModel> get todoList {
-    _$todoListAtom.reportRead();
-    return super.todoList;
-  }
-
-  @override
-  set todoList(ObservableList<TodoModel> value) {
-    _$todoListAtom.reportWrite(value, super.todoList, () {
-      super.todoList = value;
-    });
-  }
-
   final _$TodoStoreBaseActionController =
       ActionController(name: 'TodoStoreBase');
 
   @override
-  void getTime(DateTime selectTime) {
-    final _$actionInfo = _$TodoStoreBaseActionController.startAction(
-        name: 'TodoStoreBase.getTime');
-    try {
-      return super.getTime(selectTime);
-    } finally {
-      _$TodoStoreBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void addTodo(String title, String content) {
+  void addTodo(String title, String content, DateTime? selectDateTime) {
     final _$actionInfo = _$TodoStoreBaseActionController.startAction(
         name: 'TodoStoreBase.addTodo');
     try {
-      return super.addTodo(title, content);
+      return super.addTodo(title, content, selectDateTime);
     } finally {
       _$TodoStoreBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void updateTodo(String title, String content, int index,
-      List<UpdateModel> updateModelList) {
+  void updateTodo(
+      int index, String title, String content, DateTime? selectDateTime) {
     final _$actionInfo = _$TodoStoreBaseActionController.startAction(
         name: 'TodoStoreBase.updateTodo');
     try {
-      return super.updateTodo(title, content, index, updateModelList);
+      return super.updateTodo(index, title, content, selectDateTime);
     } finally {
       _$TodoStoreBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  TodoModel selectTodo(int index) {
+  void deleteTodo(int index) {
     final _$actionInfo = _$TodoStoreBaseActionController.startAction(
-        name: 'TodoStoreBase.selectTodo');
+        name: 'TodoStoreBase.deleteTodo');
     try {
-      return super.selectTodo(index);
+      return super.deleteTodo(index);
     } finally {
       _$TodoStoreBaseActionController.endAction(_$actionInfo);
     }
@@ -116,9 +60,7 @@ mixin _$TodoStore on TodoStoreBase, Store {
   @override
   String toString() {
     return '''
-data: ${data},
-selectDateTime: ${selectDateTime},
-todoList: ${todoList}
+
     ''';
   }
 }

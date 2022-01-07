@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:todo_list/page/writeTodoItemPage.dart';
 import 'package:todo_list/store/todoStore.dart';
 import 'package:todo_list/todoModel.dart';
+import 'package:todo_list/widget/cardContent.dart';
+import 'package:todo_list/widget/doneCheckBox.dart';
 import 'package:todo_list/widget/updatedCard.dart';
 
 class TodoDetailPage extends StatefulWidget {
@@ -19,6 +21,19 @@ class TodoDetailPage extends StatefulWidget {
 }
 
 class _TodoDetailPageState extends State<TodoDetailPage> {
+  int get diff {
+    return (item?.dueDate ?? DateTime(0)).difference(DateTime.now()).inDays;
+  }
+
+  TodoModel? get item {
+    return TodoStore.instance.map[widget.item.index];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,29 +54,19 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                 ),
               ),
               Text(
-                '${widget.item.title}',
+                '${item?.title ?? ''}',
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w300,
                 ),
               ),
-              Container(
-                decoration: widget.item.done
-                    ? BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.green,
-                      )
-                    : BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                        border: Border.all(
-                          width: 1,
-                        ),
+              Observer(
+                builder: (_) => item == null
+                    ? Container()
+                    : DoneCheckBox(
+                        index: item!.index,
+                        done: item!.done,
                       ),
-                child: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                ),
               ),
             ],
           ),
@@ -88,7 +93,7 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                         Expanded(
                           child: Container(
                             child: Text(
-                              '${widget.item.title}',
+                              '${item?.title ?? ''}',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w400,
@@ -98,52 +103,28 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                         ),
                         Expanded(
                           child: Container(
-                            child: widget.item.updateModelList.isEmpty
-                                ? Text(
-                                    '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.writeDate)} 작성',
-                                  )
-                                : Text(
-                                    '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.updateModelList.last.time)} 수정',
-                                  ),
+                            child: item == null
+                                ? Container()
+                                : item!.updateModelList.isEmpty
+                                    ? Text(
+                                        '${DateFormat("yyyy-MM-dd hh:mm").format(item!.writeDate)} 작성',
+                                      )
+                                    : Text(
+                                        '${DateFormat("yyyy-MM-dd hh:mm").format(item!.updateModelList.last.time)} 수정',
+                                      ),
                           ),
                         ),
-                        Expanded(
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                widget.item.dueDate == DateTime(0) ||
-                                        widget.item.done == true
-                                    ? Container()
-                                    : int.parse(widget.item.dueDate
-                                                .difference(DateTime.now())
-                                                .inDays
-                                                .toString()) ==
-                                            0
-                                        ? Text('당일')
-                                        : int.parse(widget.item.dueDate
-                                                    .difference(DateTime.now())
-                                                    .inDays
-                                                    .toString()) >
-                                                0
-                                            ? Text(
-                                                '${int.parse((widget.item.dueDate.difference(DateTime.now()).inDays + 1).toString())}일 남음',
-                                              )
-                                            : Text(
-                                                '${-int.parse((widget.item.dueDate.difference(DateTime.now()).inDays).toString())}일 초과',
-                                              ),
-                                widget.item.dueDate == DateTime(0)
-                                    ? Container()
-                                    : Text(
-                                        '${DateFormat("yyyy-MM-dd").format(widget.item.dueDate)} 까지',
-                                      ),
-                                widget.item.done
-                                    ? Text(
-                                        '${DateFormat("yyyy-MM-dd").format(widget.item.completeDate)} 완료',
-                                      )
-                                    : Container(),
-                              ],
-                            ),
+                        Observer(
+                          builder: (_) => Expanded(
+                            child: item == null
+                                ? Container()
+                                : Container(
+                                    child: CardContent(
+                                      dueDate: item!.dueDate,
+                                      done: item!.done,
+                                      completeDate: item!.completeDate,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],
@@ -156,7 +137,7 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                       horizontal: 10,
                     ),
                     child: Text(
-                      '${widget.item.content}',
+                      '${item?.content ?? ''}',
                       overflow: TextOverflow.fade,
                       style: TextStyle(
                         fontSize: 15,
@@ -184,33 +165,24 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                       ),
                     ),
                   ),
-                  ...List.generate(
-                    widget.item.updateModelList.isEmpty
-                        ? 1
-                        : widget.item.updateModelList.length,
-                    (index) => widget.item.updateModelList.isEmpty
-                        ? Container(
-                            child: Text('수정내역이없습니다.'),
-                          )
-                        : UpdatedCard(
-                            item: widget.item.updateModelList[index],
-                          ),
-                  ),
+                  ...item == null
+                      ? []
+                      : List.generate(
+                          item!.updateModelList.isEmpty
+                              ? 1
+                              : item!.updateModelList.length,
+                          (index) => item!.updateModelList.isEmpty
+                              ? Container(
+                                  child: Text('수정내역이없습니다.'),
+                                )
+                              : UpdatedCard(
+                                  item: item!.updateModelList[index],
+                                ),
+                        ),
                 ],
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  void toUpdate() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => WriteTodoItemPage(
-          addTodo: false,
-          item: widget.item,
         ),
       ),
     );
@@ -232,4 +204,15 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
           ),
         ),
       );
+
+  void toUpdate() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WriteTodoItemPage(
+          addTodo: false,
+          item: item,
+        ),
+      ),
+    );
+  }
 }

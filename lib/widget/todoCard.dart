@@ -3,6 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:todo_list/page/todoDetailPage.dart';
 import 'package:todo_list/store/todoStore.dart';
 import 'package:todo_list/todoModel.dart';
+import 'package:todo_list/widget/cardContent.dart';
+import 'package:todo_list/widget/deleteModal.dart';
+import 'package:todo_list/widget/doneCheckBox.dart';
 
 class TodoCard extends StatefulWidget {
   final TodoModel item;
@@ -17,13 +20,28 @@ class TodoCard extends StatefulWidget {
 }
 
 class _TodoCardState extends State<TodoCard> {
+  int get diff {
+    return (widget.item.dueDate ?? DateTime(0))
+        .difference(DateTime.now())
+        .inDays;
+  }
+
   @override
   Widget build(BuildContext context) => Container(
         margin: EdgeInsets.only(bottom: 10),
         child: Material(
           child: InkWell(
             onTap: () {
-              toDetail(widget.item.index);
+              toDetail(widget.item);
+            },
+            onLongPress: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return DeleteModal(
+                      index: widget.item.index,
+                    );
+                  });
             },
             child: AnimatedContainer(
               padding: EdgeInsets.symmetric(
@@ -33,8 +51,8 @@ class _TodoCardState extends State<TodoCard> {
               decoration: BoxDecoration(
                 color: widget.item.done
                     ? Colors.white
-                    : DateTime.now().isBefore(widget.item.dueDate) ||
-                            widget.item.dueDate == DateTime(0)
+                    : DateTime.now()
+                            .isBefore(widget.item.dueDate ?? DateTime(0))
                         ? Colors.yellow[300]
                         : Colors.red[100],
                 border: Border.all(
@@ -92,57 +110,18 @@ class _TodoCardState extends State<TodoCard> {
                     ),
                     Expanded(
                       child: Container(
-                        child: Column(
-                          children: [
-                            widget.item.dueDate == DateTime(0) ||
-                                    widget.item.done == true
-                                ? Container()
-                                : int.parse(widget.item.dueDate
-                                            .difference(DateTime.now())
-                                            .inDays
-                                            .toString()) ==
-                                        0
-                                    ? Text('당일')
-                                    : int.parse(widget.item.dueDate
-                                                .difference(DateTime.now())
-                                                .inDays
-                                                .toString()) >
-                                            0
-                                        ? Text(
-                                            '${int.parse((widget.item.dueDate.difference(DateTime.now()).inDays + 1).toString())}일 남음')
-                                        : Text(
-                                            '${-int.parse((widget.item.dueDate.difference(DateTime.now()).inDays).toString())}일 초과'),
-                            widget.item.dueDate == DateTime(0)
-                                ? Container()
-                                : Text(
-                                    '${DateFormat("yyyy-MM-dd").format(widget.item.dueDate)} 까지'),
-                            widget.item.done
-                                ? Text(
-                                    '${DateFormat("yyyy-MM-dd").format(widget.item.completeDate)} 완료')
-                                : Container(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        TodoStore.instance.switchDone(widget.item.index);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.item.done ? Colors.green : Colors.white,
-                          border: Border.all(
-                            width: 1,
-                            color:
-                                widget.item.done ? Colors.green : Colors.black,
+                          padding: EdgeInsets.only(
+                            right: 10,
                           ),
-                        ),
-                        child: Icon(
-                          Icons.check,
-                          color: Colors.white,
-                        ),
-                      ),
+                          child: CardContent(
+                            dueDate: widget.item.dueDate,
+                            done: widget.item.done,
+                            completeDate: widget.item.completeDate,
+                          )),
+                    ),
+                    DoneCheckBox(
+                      index: widget.item.index,
+                      done: widget.item.done,
                     )
                   ],
                 ),
@@ -152,11 +131,10 @@ class _TodoCardState extends State<TodoCard> {
         ),
       );
 
-  void toDetail(int index) {
-    TodoModel todo = TodoStore.instance.selectTodo(index);
+  void toDetail(TodoModel item) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => TodoDetailPage(item: todo),
+        builder: (context) => TodoDetailPage(item: item),
       ),
     );
   }

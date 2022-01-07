@@ -10,9 +10,9 @@ class TodoModel {
   final String title;
   final String content;
   final bool topFixed;
-  final DateTime dueDate;
+  final DateTime? dueDate;
   final DateTime writeDate;
-  final DateTime completeDate;
+  final DateTime? completeDate;
   final List<UpdateModel> updateModelList;
 
   TodoModel({
