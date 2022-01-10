@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:todo_list/updateModel.dart';
+import 'package:todo_list/model/updateModel.dart';
 
 part 'todoModel.g.dart';
 
 @JsonSerializable()
+@immutable
 class TodoModel {
   final int index;
   final bool done;

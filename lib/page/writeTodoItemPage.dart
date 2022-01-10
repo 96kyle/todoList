@@ -4,7 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_list/page/todoListPage.dart';
 import 'package:todo_list/store/todoStore.dart';
-import 'package:todo_list/todoModel.dart';
+import 'package:todo_list/model/todoModel.dart';
 import 'package:todo_list/widget/dataPickerModal.dart';
 
 class WriteTodoItemPage extends StatefulWidget {
@@ -45,7 +45,7 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.of(context).pop();
                 },
                 child: Icon(
                   Icons.arrow_back_ios_new,

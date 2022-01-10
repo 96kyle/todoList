@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:todo_list/updateModel.dart';
+import 'package:todo_list/model/updateModel.dart';
 
 class UpdatedCard extends StatefulWidget {
   final UpdateModel item;

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
@@ -6,7 +7,7 @@ import 'package:todo_list/page/todoDetailPage.dart';
 import 'package:todo_list/page/writeTodoItemPage.dart';
 import 'package:todo_list/store/todoStore.dart';
 import 'package:todo_list/widget/todoCard.dart';
-import 'package:todo_list/todoModel.dart';
+import 'package:todo_list/model/todoModel.dart';
 
 class TodoListPage extends StatefulWidget {
   TodoListPage({Key? key}) : super(key: key);
@@ -16,9 +17,40 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
+  TodoModel? test;
+
   @override
   void initState() {
     super.initState();
+
+    load();
+  }
+
+  load() async {
+    try {
+      final item = TodoModel(
+        index: 1,
+        done: false,
+        title: 'title',
+        content: 'content',
+        topFixed: false,
+        dueDate: null,
+        writeDate: DateTime.now(),
+        completeDate: null,
+        updateModelList: [],
+      );
+
+      final response = await Dio().post(
+        'http://192.168.0.140:5000/api/values/test2',
+        data: item,
+      );
+
+      test = TodoModel.fromJson(response.data);
+
+      setState(() {});
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -30,7 +62,7 @@ class _TodoListPageState extends State<TodoListPage> {
         title: Container(
           alignment: Alignment.center,
           child: Text(
-            'Todo Practice',
+            test == null ? 'Todo Practice' : '${test}',
             style: TextStyle(
               fontWeight: FontWeight.w300,
               fontSize: 25,

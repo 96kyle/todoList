@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
-import 'package:todo_list/todoModel.dart';
-import 'package:todo_list/updateModel.dart';
+import 'package:todo_list/model/todoModel.dart';
+import 'package:todo_list/model/updateModel.dart';
 
 part 'todoStore.g.dart';
 
