@@ -17,8 +17,6 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
-  TodoModel? test;
-
   @override
   void initState() {
     super.initState();
@@ -27,30 +25,24 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   load() async {
-    try {
-      final item = TodoModel(
-        index: 1,
-        done: false,
-        title: 'title',
-        content: 'content',
-        topFixed: false,
-        dueDate: null,
-        writeDate: DateTime.now(),
-        completeDate: null,
-        updateModelList: [],
-      );
+    final response = await Dio().get(
+      'http://192.168.0.140:5000/api/todo',
+    );
 
-      final response = await Dio().post(
-        'http://192.168.0.140:5000/api/values/test2',
-        data: item,
-      );
+    if (response.data is List) {
+      final list = response.data as List;
+      TodoStore.instance.todoList
+        ..clear()
+        ..addAll(list.map((e) {
+          final item = TodoModel.fromJson(e);
 
-      test = TodoModel.fromJson(response.data);
+          TodoStore.instance.map[item.id] = item;
 
-      setState(() {});
-    } catch (e) {
-      print(e);
+          return item;
+        }));
     }
+
+    setState(() {});
   }
 
   @override
@@ -62,7 +54,7 @@ class _TodoListPageState extends State<TodoListPage> {
         title: Container(
           alignment: Alignment.center,
           child: Text(
-            test == null ? 'Todo Practice' : '${test}',
+            'Todo Practice',
             style: TextStyle(
               fontWeight: FontWeight.w300,
               fontSize: 25,
@@ -77,8 +69,10 @@ class _TodoListPageState extends State<TodoListPage> {
           child: ListView.builder(
             padding: EdgeInsets.all(10),
             itemCount: TodoStore.instance.todoList.length,
-            itemBuilder: (_, index) => TodoCard(
-              item: TodoStore.instance.todoList[index],
+            itemBuilder: (_, index) => Observer(
+              builder: (_) => TodoCard(
+                item: TodoStore.instance.todoList[index],
+              ),
             ),
           ),
         ),

@@ -7,31 +7,33 @@ part of 'todoModel.dart';
 // **************************************************************************
 
 TodoModel _$TodoModelFromJson(Map<String, dynamic> json) => TodoModel(
-      index: json['index'] as int,
-      done: json['done'] as bool,
+      id: json['id'] as int,
+      isDone: json['isDone'] as bool,
       title: json['title'] as String,
       content: json['content'] as String,
-      topFixed: json['topFixed'] as bool,
+      isTopFixed: json['isTopFixed'] as bool,
       dueDate: json['dueDate'] == null
           ? null
           : DateTime.parse(json['dueDate'] as String),
-      writeDate: DateTime.parse(json['writeDate'] as String),
-      completeDate: json['completeDate'] == null
+      createdTime: DateTime.parse(json['createdTime'] as String),
+      updatedTime: DateTime.parse(json['updatedTime'] as String),
+      completedTime: json['completedTime'] == null
           ? null
-          : DateTime.parse(json['completeDate'] as String),
-      updateModelList: (json['updateModelList'] as List<dynamic>)
+          : DateTime.parse(json['completedTime'] as String),
+      todoHistories: (json['todoHistories'] as List<dynamic>)
           .map((e) => UpdateModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$TodoModelToJson(TodoModel instance) => <String, dynamic>{
-      'index': instance.index,
-      'done': instance.done,
+      'id': instance.id,
+      'isDone': instance.isDone,
       'title': instance.title,
       'content': instance.content,
-      'topFixed': instance.topFixed,
+      'isTopFixed': instance.isTopFixed,
       'dueDate': instance.dueDate?.toIso8601String(),
-      'writeDate': instance.writeDate.toIso8601String(),
-      'completeDate': instance.completeDate?.toIso8601String(),
-      'updateModelList': instance.updateModelList,
+      'createdTime': instance.createdTime.toIso8601String(),
+      'updatedTime': instance.updatedTime.toIso8601String(),
+      'completedTime': instance.completedTime?.toIso8601String(),
+      'todoHistories': instance.todoHistories,
     };

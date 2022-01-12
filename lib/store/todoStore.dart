@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_list/model/todoModel.dart';
 import 'package:todo_list/model/updateModel.dart';
@@ -23,94 +25,87 @@ abstract class TodoStoreBase with Store {
   ObservableMap<int, TodoModel> map = ObservableMap();
 
   @action
-  void addTodo(
+  addTodo(
     String title,
     String content,
-    DateTime? selectDateTime,
-  ) {
-    final addItem = TodoModel(
-      index: (todoList.isEmpty ? 0 : todoList.last.index) + 1,
-      done: false,
-      title: title,
-      content: content,
-      topFixed: false,
-      dueDate: selectDateTime,
-      writeDate: DateTime.now(),
-      completeDate: null,
-      updateModelList: [],
+    DateTime? dueDate,
+  ) async {
+    await Dio().post(
+      'http://192.168.0.140:5000/api/todo',
+      data: {
+        "title": title,
+        "content": content,
+        "dueDate": dueDate == null ? null : dueDate.toIso8601String(),
+      },
     );
 
-    todoList.add(addItem);
-    map[addItem.index] = addItem;
+    // final addItem = TodoModel(
+    //   index: (todoList.isEmpty ? 0 : todoList.last.index) + 1,
+    //   isDone: false,
+    //   title: title,
+    //   content: content,
+    //   isTopFixed: false,
+    //   dueDate: selectDateTime,
+    //   createdTime: DateTime.now(),
+    //   completeDate: null,
+    //   updateModelList: [],
+    // );
 
-    selectDateTime = DateTime(0);
+    // todoList.add(addItem);
+    // map[addItem.index] = addItem;
+
+    // selectDateTime = DateTime(0);
   }
 
   @action
-  void updateTodo(
-    int index,
+  updateTodo(
+    int id,
     String title,
     String content,
-    DateTime? selectDateTime,
-  ) {
-    final key = todoList.indexWhere((v) {
-      return v.index == index;
-    });
+    DateTime? dueDate,
+  ) async {
+    var response = await Dio().put(
+      'http://192.168.0.140:5000/api/todo/${id}',
+      data: {
+        "title": title,
+        "content": content,
+        "dueDate": dueDate == null ? null : dueDate.toIso8601String(),
+      },
+    );
 
-    final origin = todoList[key];
-    final json = origin.toJson();
+    final key = todoList.indexWhere((v) => v.id == id);
 
-    json['title'] = title;
-    json['content'] = content;
-    json['dueDate'] = selectDateTime == null ? null : selectDateTime.toString();
-    json['updateModelList'] = [];
-
-    final result = TodoModel.fromJson(json);
-
-    result.updateModelList
-      ..clear()
-      ..addAll(origin.updateModelList)
-      ..add(UpdateModel(
-        title: title,
-        content: content,
-        time: DateTime.now(),
-      ));
-
-    todoList[key] = result;
-
-    todoList = ObservableList.of(todoList);
-    map[result.index] = result;
-  }
-
-  @action
-  void deleteTodo(int index) {
-    todoList.removeWhere((v) {
-      return v.index == index;
-    });
-    map.remove(index);
-  }
-
-  @action
-  void switchDone(int index) {
-    final key = todoList.indexWhere((v) {
-      return v.index == index;
-    });
-
-    final origin = todoList[key];
-
-    final json = origin.toJson();
-    json['done'] = !origin.done;
-    json['completeDate'] = json['done'] ? DateTime.now().toString() : null;
-    json['updateModelList'] = [];
-
-    final item = TodoModel.fromJson(json);
-
-    item.updateModelList
-      ..clear()
-      ..addAll(origin.updateModelList);
+    final item = TodoModel.fromJson(response.data);
 
     todoList[key] = item;
-    map[item.index] = item;
+
+    todoList = ObservableList.of(todoList);
+    map[id] = item;
+  }
+
+  @action
+  void deleteTodo(int id) async {
+    var response = await Dio().delete(
+      'http://192.168.0.140:5000/api/todo/${id}',
+    );
+
+    todoList.removeWhere((v) {
+      return v.id == id;
+    });
+    map.remove(id);
+  }
+
+  @action
+  switchDone(int id) async {
+    var response = await Dio().put(
+      'http://192.168.0.140:5000/api/todo/${id}/toggledone',
+    );
+
+    final item = TodoModel.fromJson(response.data);
+
+    final key = todoList.indexWhere((v) => v.id == id);
+    todoList[key] = item;
+    map[id] = item;
 
     todoList = ObservableList.of(todoList);
   }

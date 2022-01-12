@@ -39,7 +39,7 @@ class _TodoCardState extends State<TodoCard> {
                   context: context,
                   builder: (BuildContext context) {
                     return DeleteModal(
-                      index: widget.item.index,
+                      index: widget.item.id,
                     );
                   });
             },
@@ -49,7 +49,7 @@ class _TodoCardState extends State<TodoCard> {
               ),
               duration: Duration(milliseconds: 100),
               decoration: BoxDecoration(
-                color: widget.item.done
+                color: widget.item.isDone
                     ? Colors.white
                     : DateTime.now()
                             .isBefore(widget.item.dueDate ?? DateTime(0))
@@ -99,13 +99,14 @@ class _TodoCardState extends State<TodoCard> {
                     ),
                     Expanded(
                       child: Container(
-                        child: widget.item.updateModelList.isEmpty
-                            ? Text(
-                                '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.writeDate)} 작성',
-                              )
-                            : Text(
-                                '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.updateModelList.last.time)} 수정',
-                              ),
+                        child:
+                            widget.item.createdTime == widget.item.updatedTime
+                                ? Text(
+                                    '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.createdTime)} 작성',
+                                  )
+                                : Text(
+                                    '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.updatedTime)} 수정',
+                                  ),
                       ),
                     ),
                     Expanded(
@@ -115,13 +116,13 @@ class _TodoCardState extends State<TodoCard> {
                           ),
                           child: CardContent(
                             dueDate: widget.item.dueDate,
-                            done: widget.item.done,
-                            completeDate: widget.item.completeDate,
+                            done: widget.item.isDone,
+                            completeDate: widget.item.completedTime,
                           )),
                     ),
                     DoneCheckBox(
-                      index: widget.item.index,
-                      done: widget.item.done,
+                      index: widget.item.id,
+                      done: widget.item.isDone,
                     )
                   ],
                 ),

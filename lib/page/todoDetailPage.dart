@@ -26,7 +26,7 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
   }
 
   TodoModel? get item {
-    return TodoStore.instance.map[widget.item.index];
+    return TodoStore.instance.map[widget.item.id];
   }
 
   @override
@@ -64,8 +64,8 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                 builder: (_) => item == null
                     ? Container()
                     : DoneCheckBox(
-                        index: item!.index,
-                        done: item!.done,
+                        index: item!.id,
+                        done: item!.isDone,
                       ),
               ),
             ],
@@ -105,12 +105,12 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                           child: Container(
                             child: item == null
                                 ? Container()
-                                : item!.updateModelList.isEmpty
+                                : item!.createdTime == item!.updatedTime
                                     ? Text(
-                                        '${DateFormat("yyyy-MM-dd hh:mm").format(item!.writeDate)} 작성',
+                                        '${DateFormat("yyyy-MM-dd hh:mm").format(item!.createdTime)} 작성',
                                       )
                                     : Text(
-                                        '${DateFormat("yyyy-MM-dd hh:mm").format(item!.updateModelList.last.time)} 수정',
+                                        '${DateFormat("yyyy-MM-dd hh:mm").format(item!.updatedTime)} 수정',
                                       ),
                           ),
                         ),
@@ -121,8 +121,8 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                                 : Container(
                                     child: CardContent(
                                       dueDate: item!.dueDate,
-                                      done: item!.done,
-                                      completeDate: item!.completeDate,
+                                      done: item!.isDone,
+                                      completeDate: item!.completedTime,
                                     ),
                                   ),
                           ),
@@ -168,15 +168,15 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
                   ...item == null
                       ? []
                       : List.generate(
-                          item!.updateModelList.isEmpty
+                          item!.todoHistories.isEmpty
                               ? 1
-                              : item!.updateModelList.length,
-                          (index) => item!.updateModelList.isEmpty
+                              : item!.todoHistories.length,
+                          (index) => item!.todoHistories.isEmpty
                               ? Container(
                                   child: Text('수정내역이없습니다.'),
                                 )
                               : UpdatedCard(
-                                  item: item!.updateModelList[index],
+                                  item: item!.todoHistories[index],
                                 ),
                         ),
                 ],

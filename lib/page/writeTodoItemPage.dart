@@ -225,7 +225,7 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
     });
   }
 
-  void addItem() {
+  addItem() async {
     if (titleController.text == '') {
       setState(() {
         errMsg = '제목은 필수 항목입니다.';
@@ -233,7 +233,7 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
       return;
     }
 
-    TodoStore.instance.addTodo(
+    await TodoStore.instance.addTodo(
       titleController.text,
       contentController.text,
       selectedTime,
@@ -246,7 +246,7 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
     );
   }
 
-  void updateItem() {
+  void updateItem() async {
     if (titleController.text == '') {
       setState(() {
         errMsg = '제목은 필수 항목입니다.';
@@ -254,8 +254,8 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
       return;
     }
 
-    TodoStore.instance.updateTodo(
-      widget.item!.index,
+    await TodoStore.instance.updateTodo(
+      widget.item!.id,
       titleController.text,
       contentController.text,
       selectedTime,

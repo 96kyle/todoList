@@ -72,7 +72,7 @@ class _UpdatedCardState extends State<UpdatedCard> {
                 child: Container(
                   alignment: Alignment.bottomRight,
                   child: Text(
-                      '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.time)} 수정'),
+                      '${DateFormat("yyyy-MM-dd hh:mm").format(widget.item.createdTime)} 수정'),
                 ),
               ),
             ],

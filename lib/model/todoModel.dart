@@ -7,26 +7,28 @@ part 'todoModel.g.dart';
 @JsonSerializable()
 @immutable
 class TodoModel {
-  final int index;
-  final bool done;
+  final int id;
+  final bool isDone;
   final String title;
   final String content;
-  final bool topFixed;
+  final bool isTopFixed;
   final DateTime? dueDate;
-  final DateTime writeDate;
-  final DateTime? completeDate;
-  final List<UpdateModel> updateModelList;
+  final DateTime createdTime;
+  final DateTime updatedTime;
+  final DateTime? completedTime;
+  final List<UpdateModel> todoHistories;
 
   TodoModel({
-    required this.index,
-    required this.done,
+    required this.id,
+    required this.isDone,
     required this.title,
     required this.content,
-    required this.topFixed,
+    required this.isTopFixed,
     required this.dueDate,
-    required this.writeDate,
-    required this.completeDate,
-    required this.updateModelList,
+    required this.createdTime,
+    required this.updatedTime,
+    required this.completedTime,
+    required this.todoHistories,
   });
 
   factory TodoModel.fromJson(Map<String, dynamic> json) =>
