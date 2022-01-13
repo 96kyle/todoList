@@ -25,25 +25,18 @@ mixin _$TodoStore on TodoStoreBase, Store {
         .run(() => super.updateTodo(id, title, content, dueDate));
   }
 
+  final _$deleteTodoAsyncAction = AsyncAction('TodoStoreBase.deleteTodo');
+
+  @override
+  Future deleteTodo(int id) {
+    return _$deleteTodoAsyncAction.run(() => super.deleteTodo(id));
+  }
+
   final _$switchDoneAsyncAction = AsyncAction('TodoStoreBase.switchDone');
 
   @override
   Future switchDone(int id) {
     return _$switchDoneAsyncAction.run(() => super.switchDone(id));
-  }
-
-  final _$TodoStoreBaseActionController =
-      ActionController(name: 'TodoStoreBase');
-
-  @override
-  void deleteTodo(int index) {
-    final _$actionInfo = _$TodoStoreBaseActionController.startAction(
-        name: 'TodoStoreBase.deleteTodo');
-    try {
-      return super.deleteTodo(index);
-    } finally {
-      _$TodoStoreBaseActionController.endAction(_$actionInfo);
-    }
   }
 
   @override

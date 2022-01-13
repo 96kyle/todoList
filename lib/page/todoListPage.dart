@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
+import 'package:todo_list/api/client.dart';
 import 'package:todo_list/page/todoDetailPage.dart';
 import 'package:todo_list/page/writeTodoItemPage.dart';
 import 'package:todo_list/store/todoStore.dart';
@@ -17,6 +18,8 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
+  final dio = Dio();
+
   @override
   void initState() {
     super.initState();
@@ -25,17 +28,14 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   load() async {
-    final response = await Dio().get(
-      'http://192.168.0.140:5000/api/todo',
-    );
+    final response = await Client(dio).getTodoList();
 
-    if (response.data is List) {
-      final list = response.data as List;
+    if (response is List) {
+      final list = response;
       TodoStore.instance.todoList
         ..clear()
         ..addAll(list.map((e) {
           final item = TodoModel.fromJson(e);
-
           TodoStore.instance.map[item.id] = item;
 
           return item;

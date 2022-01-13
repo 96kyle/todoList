@@ -5,7 +5,6 @@ import 'package:todo_list/model/updateModel.dart';
 part 'todoModel.g.dart';
 
 @JsonSerializable()
-@immutable
 class TodoModel {
   final int id;
   final bool isDone;
