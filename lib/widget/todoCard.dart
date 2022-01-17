@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list/model/todo/todoModel.dart';
 import 'package:todo_list/page/todoDetailPage.dart';
 import 'package:todo_list/store/todoStore.dart';
-import 'package:todo_list/model/todoModel.dart';
 import 'package:todo_list/widget/cardContent.dart';
 import 'package:todo_list/widget/deleteModal.dart';
 import 'package:todo_list/widget/doneCheckBox.dart';

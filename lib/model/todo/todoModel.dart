@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:todo_list/model/updateModel.dart';
+import 'package:todo_list/model/todo/updateModel.dart';
 
 part 'todoModel.g.dart';
 
 @JsonSerializable()
 class TodoModel {
   final int id;
+  final int userId;
   final bool isDone;
   final String title;
   final String content;
@@ -19,6 +20,7 @@ class TodoModel {
 
   TodoModel({
     required this.id,
+    required this.userId,
     required this.isDone,
     required this.title,
     required this.content,

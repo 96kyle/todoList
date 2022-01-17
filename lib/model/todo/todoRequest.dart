@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:todo_list/model/updateModel.dart';
 
 part 'todoRequest.g.dart';
 

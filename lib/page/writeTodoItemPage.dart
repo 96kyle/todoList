@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list/model/todo/todoModel.dart';
 import 'package:todo_list/page/todoListPage.dart';
 import 'package:todo_list/store/todoStore.dart';
-import 'package:todo_list/model/todoModel.dart';
 import 'package:todo_list/widget/dataPickerModal.dart';
+import 'package:todo_list/widget/defaultTextField.dart';
 
 class WriteTodoItemPage extends StatefulWidget {
   bool addTodo;
@@ -110,15 +111,10 @@ class _MakeTodoItemState extends State<WriteTodoItemPage> {
                   alignment: Alignment.centerLeft,
                   child: Text('제목'),
                 ),
-                TextField(
+                DefaultTextField(
                   controller: titleController,
-                  decoration: InputDecoration(
-                    hintText: widget.item != null ? widget.item!.title : '',
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
+                  hintText: widget.item != null ? widget.item!.title : '',
+                  obscureText: false,
                 ),
                 errMsg == ''
                     ? Container()

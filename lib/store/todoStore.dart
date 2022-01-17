@@ -4,9 +4,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_list/api/client.dart';
-import 'package:todo_list/model/todoModel.dart';
-import 'package:todo_list/model/todoRequest.dart';
-import 'package:todo_list/model/updateModel.dart';
+import 'package:todo_list/model/todo/todoModel.dart';
+import 'package:todo_list/model/todo/todoRequest.dart';
+import 'package:todo_list/store/userStore.dart';
 
 part 'todoStore.g.dart';
 
@@ -34,11 +34,13 @@ abstract class TodoStoreBase with Store {
     String content,
     DateTime? dueDate,
   ) async {
-    await Client(dio).addTodo(TodoRequest(
-      title: title,
-      content: content,
-      dueDate: dueDate == null ? null : dueDate.toIso8601String(),
-    ));
+    await Client().addTodo(
+      TodoRequest(
+        title: title,
+        content: content,
+        dueDate: dueDate == null ? null : dueDate.toIso8601String(),
+      ),
+    );
   }
 
   @action
@@ -48,7 +50,7 @@ abstract class TodoStoreBase with Store {
     String content,
     DateTime? dueDate,
   ) async {
-    var response = await Client(dio).updateTodo(
+    var response = await Client().updateTodo(
       id,
       TodoRequest(
         title: title,
@@ -81,7 +83,7 @@ abstract class TodoStoreBase with Store {
 
   @action
   switchDone(int id) async {
-    var response = await Client(dio).toggleDone(id);
+    var response = await Client().toggleDone(id);
 
     final item = TodoModel.fromJson(response);
 

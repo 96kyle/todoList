@@ -4,11 +4,13 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_list/api/client.dart';
+import 'package:todo_list/model/todo/todoModel.dart';
+import 'package:todo_list/page/loginPage.dart';
 import 'package:todo_list/page/todoDetailPage.dart';
 import 'package:todo_list/page/writeTodoItemPage.dart';
 import 'package:todo_list/store/todoStore.dart';
+import 'package:todo_list/store/userStore.dart';
 import 'package:todo_list/widget/todoCard.dart';
-import 'package:todo_list/model/todoModel.dart';
 
 class TodoListPage extends StatefulWidget {
   TodoListPage({Key? key}) : super(key: key);
@@ -18,8 +20,6 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
-  final dio = Dio();
-
   @override
   void initState() {
     super.initState();
@@ -28,8 +28,8 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   load() async {
-    final response = await Client(dio).getTodoList();
-
+    final response = await Client().getTodoList();
+    print(response);
     if (response is List) {
       final list = response;
       TodoStore.instance.todoList
@@ -75,6 +75,25 @@ class _TodoListPageState extends State<TodoListPage> {
               ),
             ),
           ),
+        ),
+      ),
+      bottomNavigationBar: InkWell(
+        onTap: () {
+          UserStore.instance.logOut();
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => LoginPage(),
+            ),
+          );
+        },
+        child: Container(
+          alignment: Alignment.center,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.blue[100],
+          ),
+          child: Text('로그아웃'),
         ),
       ),
     );

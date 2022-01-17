@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list/model/todo/todoModel.dart';
 import 'package:todo_list/page/writeTodoItemPage.dart';
 import 'package:todo_list/store/todoStore.dart';
-import 'package:todo_list/model/todoModel.dart';
 import 'package:todo_list/widget/cardContent.dart';
 import 'package:todo_list/widget/doneCheckBox.dart';
 import 'package:todo_list/widget/updatedCard.dart';

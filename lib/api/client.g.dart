@@ -9,13 +9,43 @@ part of 'client.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps
 
 class _Client implements Client {
-  _Client(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'http://192.168.0.140:5000/api/todo';
-  }
+  _Client(this._dio, {this.baseUrl});
 
   final Dio _dio;
 
   String? baseUrl;
+
+  @override
+  Future<dynamic> login(userRequest) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(userRequest.toJson());
+    final _result = await _dio.fetch(_setStreamType<dynamic>(
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/user/login',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<dynamic> register(registerRequest) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(registerRequest.toJson());
+    final _result = await _dio.fetch(_setStreamType<dynamic>(
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/user',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = _result.data;
+    return value;
+  }
 
   @override
   Future<dynamic> getTodoList() async {
@@ -25,7 +55,7 @@ class _Client implements Client {
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch(_setStreamType<dynamic>(
         Options(method: 'GET', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/',
+            .compose(_dio.options, '/todo',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = _result.data;
@@ -41,7 +71,7 @@ class _Client implements Client {
     _data.addAll(todoRequest.toJson());
     final _result = await _dio.fetch(_setStreamType<dynamic>(
         Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/',
+            .compose(_dio.options, '/todo',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = _result.data;
@@ -49,7 +79,7 @@ class _Client implements Client {
   }
 
   @override
-  Future<dynamic> updateTodo(id, todoRequest) async {
+  Future<dynamic> updateTodo(todoId, todoRequest) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -57,7 +87,7 @@ class _Client implements Client {
     _data.addAll(todoRequest.toJson());
     final _result = await _dio.fetch(_setStreamType<dynamic>(
         Options(method: 'PUT', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/${id}',
+            .compose(_dio.options, '/todo/${todoId}',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = _result.data;
@@ -65,14 +95,14 @@ class _Client implements Client {
   }
 
   @override
-  Future<dynamic> toggleDone(id) async {
+  Future<dynamic> toggleDone(todoId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch(_setStreamType<dynamic>(
         Options(method: 'PUT', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/${id}/toggledone',
+            .compose(_dio.options, '/todo/${todoId}/toggledone',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = _result.data;
