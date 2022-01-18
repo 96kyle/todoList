@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_list/api/client.dart';
 import 'package:todo_list/model/user/loginRequest.dart';
 import 'package:todo_list/page/registerPage.dart';
@@ -16,6 +17,24 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final idController = TextEditingController();
   final pwController = TextEditingController();
+
+  @override
+  void initState() {
+    load();
+    super.initState();
+  }
+
+  load() async {
+    var prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('jwt') != null) {
+      Client.token = prefs.getString('jwt')!;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TodoListPage(),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +74,8 @@ class _LoginPageState extends State<LoginPage> {
                     idController.text = "";
                     pwController.text = "";
                   } else {
-                    print(Client.token);
+                    var prefs = await SharedPreferences.getInstance();
+                    await prefs.setString('jwt', Client.token);
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => TodoListPage(),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_list/api/client.dart';
 import 'package:todo_list/model/todo/todoModel.dart';
 import 'package:todo_list/page/loginPage.dart';
@@ -78,9 +79,10 @@ class _TodoListPageState extends State<TodoListPage> {
         ),
       ),
       bottomNavigationBar: InkWell(
-        onTap: () {
+        onTap: () async {
           UserStore.instance.logOut();
-
+          var prefs = await SharedPreferences.getInstance();
+          prefs.remove('jwt');
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => LoginPage(),
