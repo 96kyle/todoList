@@ -58,15 +58,6 @@ abstract class TodoStoreBase with Store {
         dueDate: dueDate == null ? null : dueDate.toIso8601String(),
       ),
     );
-
-    final key = todoList.indexWhere((v) => v.id == id);
-
-    final item = TodoModel.fromJson(response);
-
-    todoList[key] = item;
-
-    todoList = ObservableList.of(todoList);
-    map[id] = item;
   }
 
   @action
